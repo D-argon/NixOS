@@ -13,11 +13,6 @@
 	#};
   };
 
-  xresources.properties = {
-    "Xcursor.size" = 16;
-    "Xft.dpi" = 172;
-  };
-
   home.packages = with pkgs; [
     
     neofetch
