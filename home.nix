@@ -23,6 +23,7 @@
     keepassxc
 
     nix-output-monitor
+    nixfmt-rfc-style
 
     glow
 
@@ -31,6 +32,9 @@
     lm_sensors
     pciutils
     usbutils
+
+    qemu
+    obsidian
   ];
 
   programs.git = {
@@ -51,6 +55,6 @@
 	lla = "ll -a";
     };
   };
-    
+
   home.stateVersion = "25.05";
 }

@@ -40,12 +40,16 @@
   };
 
   # bluetooth
-  hardware.bluetooth.enable = true;
+  hardware.bluetooth = {
+	enable = true;
+	powerOnBoot = true;
+	settings.General.Experimental = true;
+  };
   services.blueman.enable = true;
 
   services.xserver = {
     enable = true;
-
+  
     windowManager.i3 = {
       enable = true;
       extraPackages = with pkgs; [
@@ -54,31 +58,22 @@
         i3blocks
       ];
     };
+
+    xkb.layout = "br";
   };
   programs.i3lock.enable = true;
 
   environment.pathsToLink = ["/libexec"];
-  services.displayManager.defaultSession = "none+i3";
-
-  # Configure keymap in X11
-  services.xserver.xkb = {
-    layout = "br";
-    variant = "nodeadkeys";
-  };
+  #services.displayManager.defaultSession = "none+i3";  
 
   # Configure console keymap
-  console.keyMap = "br-abnt2";
+  console.keyMap = "br-abnt";
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.dargon = {
     isNormalUser = true;
     description = "dargon";
-    extraGroups = ["networkmanager" "wheel"];
-    packages = with pkgs; [
-      discord
-      youtube-music
-      keepassxc
-    ];
+    extraGroups = ["networkmanager" "wheel" "libvirtd" ];
   };
 
   # Allow unfree packages
@@ -100,11 +95,17 @@
 
     yad
     xdotool
+    clipit
+    xclip
 
     dnsutils
     iftop
 
     librewolf
+    freerdp
+    pavucontrol
+    alacritty
+    scrot
   ];
 
   # Some programs need SUID wrappers, can be configured further or are
@@ -161,7 +162,6 @@
 
   environment.etc."firefox/policies/policies.json".target = "librewolf/policies/policies.json";
 
-  programs.git.enable = true;
   programs.vim.enable = true;
   programs.neovim.enable = true;
   environment.variables.EDITOR = "nvim";
@@ -179,6 +179,39 @@
 	};
 	openFirewall = true;
   };
+
+  security.rtkit.enable = true;
+  services.pipewire = {
+	enable = true;
+	alsa.enable = true;
+	pulse.enable = true;
+	audio.enable = true;
+	jack.enable = true;
+	wireplumber.enable = true;	
+	extraConfig = {
+	  pipewire."99-silent-bell.conf" = {
+		"context.properties" = {
+		  "module.x11.bell" = false;
+		};
+	  };
+	};
+	  
+  };
+	
+  virtualisation.libvirtd = {
+	enable = true;
+          
+	qemu = {
+	  ovmf = {
+	    enable = true;
+	    packages = with pkgs; [ OVMFFull.fd ];
+	  };
+	  swtpm.enable = true;
+	};
+  };
+  programs.virt-manager.enable = true;
+
+  security.tpm2.enable = true;
 
   nix.settings.experimental-features = ["nix-command" "flakes"];
   # Open ports in the firewall.
