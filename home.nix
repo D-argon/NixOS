@@ -79,24 +79,27 @@
 
       "webgl.disabled" = false;
     };
-
-    ExtensionsSettings = {
-      "*".installation_mode = "blocked";
-      "uBlock0@raymondhill.net" = {
-        install_url = "https://addons.mozilla.org/firefox/downloads/latest/ublock-origin/latest.xpi";
-        installation_mode = "force_installed";
-      };
-      "treestyletab@piro.sakura.ne.jp" = {
-        install_url = "https://addons.mozilla.org/firefox/downloads/latest/tree-style-tab/latest.xpi";
-        installation_mode = "force_installed";
-      };
-      "{00000f2a-7cde-4f20-83ed-434fcb420d71}" = {
-        install_url = "https://addons.mozilla.org/firefox/downloads/latest/imagus/latest.xpi";
-        installation_mode = "force_installed";
-      };
-      "jid1-ZAdIEUB7XOzOJw@jetpack" = {
-        install_url = "https://addons.mozilla.org/firefox/downloads/latest/duckduckgo-for-firefox/latest.xpi";
-        installation_mode = "force_installed";
+    policies = {
+      BlockAboutConfig = true;
+      DefaultDownloadDirectory = "\${home}/Downloads";
+      ExtensionsSettings = {
+        "*".installation_mode = "blocked";
+        "uBlock0@raymondhill.net" = {
+          install_url = "https://addons.mozilla.org/firefox/downloads/latest/ublock-origin/latest.xpi";
+          installation_mode = "force_installed";
+        };
+        "treestyletab@piro.sakura.ne.jp" = {
+          install_url = "https://addons.mozilla.org/firefox/downloads/latest/tree-style-tab/latest.xpi";
+          installation_mode = "force_installed";
+        };
+        "{00000f2a-7cde-4f20-83ed-434fcb420d71}" = {
+          install_url = "https://addons.mozilla.org/firefox/downloads/latest/imagus/latest.xpi";
+          installation_mode = "force_installed";
+        };
+        "jid1-ZAdIEUB7XOzOJw@jetpack" = {
+          install_url = "https://addons.mozilla.org/firefox/downloads/latest/duckduckgo-for-firefox/latest.xpi";
+          installation_mode = "force_installed";
+        };
       };
     };
 
