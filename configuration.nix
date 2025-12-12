@@ -1,32 +1,33 @@
-# Edit this configuration file to define what should be installed on
-# your system.  Help is available in the configuration.nix(5) man page
-# and in the NixOS manual (accessible by running ‘nixos-help’).
-{ config, pkgs, inputs, ...}: 
+{
+  config,
+  pkgs,
+  inputs,
+  ...
+}:
 {
   imports = [
     ./hardware-configuration.nix
   ];
 
-  # Bootloader.
+  # Bootloader
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
-  networking.hostName = "sylvester"; # Define your hostname.
+  networking.hostName = "sylvester";
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
 
-  # Configure network proxy if necessary
+  # network proxy
   # networking.proxy.default = "http://user:password@proxy:port/";
   # networking.proxy.noProxy = "127.0.0.1,localhost,internal.domain";
 
-  # Enable networking
+  # networking
   networking.networkmanager.enable = true;
 
-  # Set your time zone.
+  # time zone.
   time.timeZone = "America/Sao_Paulo";
 
-  # Select internationalisation properties.
+  # locale
   i18n.defaultLocale = "en_US.UTF-8";
-
   i18n.extraLocaleSettings = {
     LC_ADDRESS = "pt_BR.UTF-8";
     LC_IDENTIFICATION = "pt_BR.UTF-8";
@@ -41,15 +42,14 @@
 
   # bluetooth
   hardware.bluetooth = {
-	enable = true;
-	powerOnBoot = true;
-	settings.General.Experimental = true;
+    enable = true;
+    powerOnBoot = true;
+    settings.General.Experimental = true;
   };
-  services.blueman.enable = true;
 
   services.xserver = {
     enable = true;
-  
+
     windowManager.i3 = {
       enable = true;
       extraPackages = with pkgs; [
@@ -63,32 +63,32 @@
   };
   programs.i3lock.enable = true;
 
-  environment.pathsToLink = ["/libexec"];
-  #services.displayManager.defaultSession = "none+i3";  
+  environment.pathsToLink = [ "/libexec" ];
+  #services.displayManager.defaultSession = "none+i3";
 
   # Configure console keymap
-  console.keyMap = "br-abnt";
+  console.keyMap = "br-abnt2";
 
-  # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.dargon = {
     isNormalUser = true;
     description = "dargon";
-    extraGroups = ["networkmanager" "wheel" "libvirtd" ];
+    extraGroups = [
+      "networkmanager"
+      "wheel"
+      "libvirtd"
+    ];
   };
 
-  # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
 
-  # List packages installed in system profile. To search, run:
-  # $ nix search wget
   environment.systemPackages = with pkgs; [
     wget
     gcc
-    
+
     zip
     unzip
     p7zip
-    
+
     gnumake
     gnupg
     tree
@@ -104,12 +104,10 @@
     librewolf
     freerdp
     pavucontrol
-    alacritty
     scrot
   ];
 
-  # Some programs need SUID wrappers, can be configured further or are
-  # started in user sessions.
+  # SUID
   # programs.mtr.enable = true;
   # programs.gnupg.agent = {
   #   enable = true;
@@ -119,101 +117,73 @@
   programs.firefox = {
     enable = true;
     package = pkgs.librewolf;
-    languagePacks = ["en-US"];
-    policies = {
-      DisableTelemetry = true;
-      DisableFirefoxStudies = true;
-    
-      ExtensionsSettings = {
-        "*".installation_mode = "blocked";
-        "uBlock0@raymondhill.net" = {
-          install_url = "https://addons.mozilla.org/firefox/downloads/latest/ublock-origin/latest.xpi";
-          installation_mode = "force_installed";
-        };
-        "treestyletab@piro.sakura.ne.jp" = {
-          install_url = "https://addons.mozilla.org/firefox/downloads/latest/tree-style-tab/latest.xpi";
-          installation_mode = "force_installed";
-        };
-        "{00000f2a-7cde-4f20-83ed-434fcb420d71}" = {
-          install_url = "https://addons.mozilla.org/firefox/downloads/latest/imagus/latest.xpi";
-          installation_mode = "force_installed";
-        };
-        "jid1-ZAdIEUB7XOzOJw@jetpack" = {
-          install_url = "https://addons.mozilla.org/firefox/downloads/latest/duckduckgo-for-firefox/latest.xpi";
-          installation_mode = "force_installed";
-        };
-      };
-    };
-
-    preferences = {
-      "cookiebanners.service.mode.privateBrowsing" = 2;
-      "cookiebanners.service.mode" = 2;
-      "privacy.donottrackheader.enabled" = true;
-      "privacy.fingerprintingProtection" = true;
-      "privacy.resistFingerprinting" = true;
-      "privacy.trackingProtection.emailtracking.enabled" = true;
-      "privacy.trackingprotection.fingerprinting.enabled" = true;
-      "privacy.trackingprotection.socialtracking.enabled" = true;
-      "privacy.trackingprotection.enabled" = true;
-      "browser.tabs.tabmanager.enabled" = false;
-      # "extensions.pocket.enabled" =
-    };
+    languagePacks = [ "en-US" ];
+    policies.DisableTelemetry = true;
   };
-
   environment.etc."firefox/policies/policies.json".target = "librewolf/policies/policies.json";
 
+  programs.virt-manager.enable = true;
   programs.vim.enable = true;
   programs.neovim.enable = true;
   environment.variables.EDITOR = "nvim";
 
-
-  # List services that you want to enable:
+  security = {
+    rtkit.enable = true;
+    tpm2.enable = true;
+  };
 
   # Enable the OpenSSH daemon.
-  services.openssh = {
-	enable = true;
-	settings = {
-	  X11Forwarding = true;
-	  PermitRootLogin = "no";
-	  PasswordAuthentication = false;
-	};
-	openFirewall = true;
+  services = {
+
+    openssh = {
+      enable = true;
+      settings = {
+        X11Forwarding = true;
+        PermitRootLogin = "no";
+        PasswordAuthentication = false;
+      };
+      openFirewall = true;
+    };
+
+    pipewire = {
+      enable = true;
+      alsa.enable = true;
+      pulse.enable = true;
+      audio.enable = true;
+      jack.enable = true;
+      wireplumber.enable = true;
+      extraConfig = {
+        pipewire."99-silent-bell.conf" = {
+          "context.properties" = {
+            "module.x11.bell" = false;
+          };
+        };
+      };
+    };
+
+    gvfs.enable = true;
+    tumbler.enable = true;
+    blueman.enable = true;
   };
 
-  security.rtkit.enable = true;
-  services.pipewire = {
-	enable = true;
-	alsa.enable = true;
-	pulse.enable = true;
-	audio.enable = true;
-	jack.enable = true;
-	wireplumber.enable = true;	
-	extraConfig = {
-	  pipewire."99-silent-bell.conf" = {
-		"context.properties" = {
-		  "module.x11.bell" = false;
-		};
-	  };
-	};
-	  
-  };
-	
   virtualisation.libvirtd = {
-	enable = true;
-          
-	qemu = {
-	  ovmf = {
-	    enable = true;
-	    packages = with pkgs; [ OVMFFull.fd ];
-	  };
-	  swtpm.enable = true;
-	};
+    enable = true;
+
+    qemu = {
+      ovmf = {
+        enable = true;
+        packages = [ pkgs.OVMFFull.fd ];
+      };
+
+      swtpm.enable = true;
+    };
   };
-  programs.virt-manager.enable = true;
 
-  security.tpm2.enable = true;
+  nix.settings.experimental-features = [
+    "nix-command"
+    "flakes"
+  ];
 
-  nix.settings.experimental-features = ["nix-command" "flakes"];
   # Open ports in the firewall.
   # networking.firewall.allowedTCPPorts = [ ... ];
   # networking.firewall.allowedUDPPorts = [ ... ];
