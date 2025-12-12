@@ -120,7 +120,6 @@
     languagePacks = [ "en-US" ];
     policies.DisableTelemetry = true;
   };
-  environment.etc."firefox/policies/policies.json".target = "librewolf/policies/policies.json";
 
   programs.virt-manager.enable = true;
   programs.vim.enable = true;

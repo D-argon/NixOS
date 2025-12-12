@@ -56,6 +56,7 @@
     shellAliases = {
       k = "kubectl";
       lla = "ll -a";
+      soft = "systemctl soft-reboot";
     };
   };
 
@@ -75,16 +76,17 @@
       "privacy.trackingprotection.fingerprinting.enabled" = true;
       "privacy.trackingprotection.socialtracking.enabled" = true;
       "privacy.trackingprotection.enabled" = true;
-      # "extensions.pocket.enabled" =
-
       "webgl.disabled" = false;
     };
+
     policies = {
       BlockAboutConfig = true;
       DefaultDownloadDirectory = "\${home}/Downloads";
       ExtensionsSettings = {
-        "*".installation_mode = "blocked";
-        "uBlock0@raymondhill.net" = {
+        
+	"*".installation_mode = "blocked";
+        
+	"uBlock0@raymondhill.net" = {
           install_url = "https://addons.mozilla.org/firefox/downloads/latest/ublock-origin/latest.xpi";
           installation_mode = "force_installed";
         };
