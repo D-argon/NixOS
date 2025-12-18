@@ -57,7 +57,6 @@
     enable = true;
 
     settings = {
-      env.TERM = "xterm-256color";
       window.opacity = 0.7;
       font = {
         size = 12.0;
