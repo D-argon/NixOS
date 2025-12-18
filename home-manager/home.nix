@@ -1,8 +1,9 @@
-{ config, pkgs, ... }:
-
+{ inputs, lib, config, pkgs, ... }:
 {
-  home.username = "dargon";
-  home.homeDirectory = "/home/dargon";
+  home = {
+    username = "dargon";
+    homeDirectory = "/home/dargon";
+  };
 
   home.packages = with pkgs; [
 
@@ -26,10 +27,10 @@
 
     obsidian
     libreoffice
+    gimp
 
     gnome-connections
 
-    alacritty
     feh
     xfce.thunar
     xfce.thunar-archive-plugin
@@ -46,21 +47,39 @@
     userEmail = "dargon@sylvester";
   };
 
+  programs.alacritty = {
+  	enable = true;
+
+	settings = {
+	  env.TERM = "xterm-256color";
+	  windows.opacity = "0.7";
+	  font = {
+	    size = "12.0";
+	    draw_bold_text_with_bright_colors = true;
+	};
+	  scrolling.multiplier = 5;
+	  selection.save_to_clipboard = true;
+	  };
+	  };
+
   programs.bash = {
     enable = true;
     enableCompletion = true;
-    #bashrcExtra = ''
-    #	export PATH="$PATH:$HOME/bin:$HOME/.local/bin:$HOME/go/bin"
-    #  '';
+    bashrcExtra = ''
+    export PATH="$PATH:$HOME/bin:$HOME/.local/bin:$HOME/go/bin"
+    '';
 
     shellAliases = {
+      sudo = "sudo ";
       k = "kubectl";
       lla = "ll -a";
       soft = "systemctl soft-reboot";
+      nixRebuildS = "sudo nixos-rebuild switch --flake ~/sylvesterNixos/";
     };
   };
 
   programs.librewolf = {
+    enable = true;
     settings = {
 
       "browser.tabs.tabmanager.enabled" = false;
@@ -87,9 +106,13 @@
 	"*".installation_mode = "blocked";
         
 	"uBlock0@raymondhill.net" = {
-          install_url = "https://addons.mozilla.org/firefox/downloads/latest/ublock-origin/latest.xpi";
+          install_url = "https://ad	dons.mozilla.org/firefox/downloads/latest/ublock-origin/latest.xpi";
           installation_mode = "force_installed";
         };
+	#"" = {
+        #  install_url = "https://addons.mozilla.org/firefox/downloads/latest/keepassxc-browser/latest.xpi";
+        #  installation_mode = "force_installed";
+        #};
         "treestyletab@piro.sakura.ne.jp" = {
           install_url = "https://addons.mozilla.org/firefox/downloads/latest/tree-style-tab/latest.xpi";
           installation_mode = "force_installed";
@@ -106,6 +129,8 @@
     };
 
   };
+
+  systemd.user.startServices = "sd-switch";
 
   home.stateVersion = "25.05";
 }

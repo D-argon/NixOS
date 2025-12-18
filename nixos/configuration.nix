@@ -1,9 +1,4 @@
-{
-  config,
-  pkgs,
-  inputs,
-  ...
-}:
+{ inputs, lib, config, pkgs, ... }:
 {
   imports = [
     ./hardware-configuration.nix
@@ -100,6 +95,8 @@
 
     dnsutils
     iftop
+    socat
+    nmap
 
     librewolf
     freerdp
@@ -116,7 +113,6 @@
 
   programs.firefox = {
     enable = true;
-    package = pkgs.librewolf;
     languagePacks = [ "en-US" ];
     policies.DisableTelemetry = true;
   };
@@ -163,6 +159,20 @@
     gvfs.enable = true;
     tumbler.enable = true;
     blueman.enable = true;
+
+    printing = {
+      enable = true;
+      drivers = with pkgs; [ hplip hplipWithPlugin ];
+      listenAddresses = [ "*:631" ];
+      browsing = true;
+      defaultShared = true;
+    };
+
+    avahi = {
+      enable = true;
+      nssmdns4 = true;
+      openFirewall = true;
+    };
   };
 
   virtualisation.libvirtd = {
@@ -178,10 +188,23 @@
     };
   };
 
-  nix.settings.experimental-features = [
-    "nix-command"
-    "flakes"
-  ];
+  nix = let
+    flakeInputs = lib.filterAttrs (_: lib.isType "flake") inputs;
+  in {
+    settings = {
+      experimental-features = "nix-command flakes";
+      # disable global registry
+      flake-registry = "";
+      # workaround https://github.com/NixOS/nix/issues/9574
+      nix-path = config.nix.nixPath;
+    };
+    # disable channels
+    channel.enable = false;
+
+    # make flake registry and nix path match flake inputs
+    registry = lib.mapAttrs (_: flake: {inherit flake;}) flakeInputs;
+    nixPath = lib.mapAttrsToList (n: _: "${n}=flake:${n}") flakeInputs;
+  };
 
   # Open ports in the firewall.
   # networking.firewall.allowedTCPPorts = [ ... ];
@@ -189,11 +212,7 @@
   # Or disable the firewall altogether.
   # networking.firewall.enable = false;
 
-  # This value determines the NixOS release from which the default
-  # settings for stateful data, like file locations and database versions
-  # on your system were taken. It‘s perfectly fine and recommended to leave
-  # this value at the release version of the first install of this system.
-  # Before changing this value read the documentation for this option
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
-  system.stateVersion = "25.05"; # Did you read the comment?
+  # https://nixos.wiki/wiki/FAQ/When_do_I_update_stateVersion
+  system.stateVersion = "25.05";
 }
