@@ -11,9 +11,9 @@
 
   networking.hostName = "sylvester";
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
-  
-  nixpkgs.config.allowUnfree = true;
 
+  nixpkgs.config.allowUnfree = true;
+  
   home-manager = {
     extraSpecialArgs = { inherit inputs; };
     users = {
@@ -83,8 +83,6 @@
       "libvirtd"
     ];
   };
-
-  nixpkgs.config.allowUnfree = true;
 
   environment.systemPackages = with pkgs; [
     wget
