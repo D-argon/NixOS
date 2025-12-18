@@ -1,5 +1,5 @@
 {
-  description = "sylvester's flake";     
+  description = "sylvester's flake";
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-25.05";
@@ -10,10 +10,13 @@
     };
   };
 
-  outputs =
-    { self, nixpkgs, home-manager, ... }@inputs: let
-
-    systems = [ 
+  outputs = {
+    self,
+    nixpkgs,
+    home-manager,
+    ...
+  } @ inputs: let
+    systems = [
       "aarch64-linux"
       "i686-linux"
       "x86_64-linux"
@@ -21,8 +24,7 @@
       "x86_64-darwin"
     ];
     forAllSystems = nixpkgs.lib.genAttrs systems;
-
-    in {
+  in {
     # custom packages
     # access 'nix build', 'nix shell', etc
     packages = forAllSystems (system: import ./pkgs nixpkgs.legacyPackages.${system});
@@ -38,14 +40,13 @@
     # upstream into home-manager
     homeManagerModules = import ./modules/home-manager;
 
-
-      nixosConfigurations = {
-	sylvester = nixpkgs.lib.nixosSystem {
-          specialArgs = { inherit inputs; };
-          modules = [
-            ./nixos/configuration.nix 
-          ];
-        };
+    nixosConfigurations = {
+      sylvester = nixpkgs.lib.nixosSystem {
+        specialArgs = {inherit inputs;};
+        modules = [
+          ./nixos/configuration.nix
+        ];
       };
     };
+  };
 }

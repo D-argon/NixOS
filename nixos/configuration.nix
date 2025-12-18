@@ -1,5 +1,10 @@
-{ inputs, lib, config, pkgs, ... }:
 {
+  inputs,
+  lib,
+  config,
+  pkgs,
+  ...
+}: {
   imports = [
     inputs.home-manager.nixosModules.home-manager
     ./hardware-configuration.nix
@@ -13,11 +18,11 @@
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
 
   nixpkgs.config.allowUnfree = true;
-  
+
   home-manager = {
-    extraSpecialArgs = { inherit inputs; };
+    extraSpecialArgs = {inherit inputs;};
     users = {
-       dargon= import ../home-manager/home.nix;
+      dargon = import ../home-manager/home.nix;
     };
   };
 
@@ -68,7 +73,7 @@
   };
   programs.i3lock.enable = true;
 
-  environment.pathsToLink = [ "/libexec" ];
+  environment.pathsToLink = ["/libexec"];
   #services.displayManager.defaultSession = "none+i3";
 
   # Configure console keymap
@@ -121,7 +126,7 @@
 
   programs.firefox = {
     enable = true;
-    languagePacks = [ "en-US" ];
+    languagePacks = ["en-US"];
     policies.DisableTelemetry = true;
   };
 
@@ -137,7 +142,6 @@
 
   # Enable the OpenSSH daemon.
   services = {
-
     openssh = {
       enable = true;
       settings = {
@@ -170,8 +174,8 @@
 
     printing = {
       enable = true;
-      drivers = with pkgs; [ hplip hplipWithPlugin ];
-      listenAddresses = [ "*:631" ];
+      drivers = with pkgs; [hplip hplipWithPlugin];
+      listenAddresses = ["*:631"];
       browsing = true;
       defaultShared = true;
     };
@@ -189,7 +193,7 @@
     qemu = {
       ovmf = {
         enable = true;
-        packages = [ pkgs.OVMFFull.fd ];
+        packages = [pkgs.OVMFFull.fd];
       };
 
       swtpm.enable = true;
