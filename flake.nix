@@ -1,6 +1,5 @@
 {
-  description = "sylvester's flake";
-      
+  description = "sylvester's flake";     
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-25.05";
@@ -26,12 +25,12 @@
     in {
     # custom packages
     # access 'nix build', 'nix shell', etc
-    ## packages = forAllSystems (system: import ./pkgs nixpkgs.legacyPackages.${system});
+    packages = forAllSystems (system: import ./pkgs nixpkgs.legacyPackages.${system});
     # 'nix fmt'
     formatter = forAllSystems (system: nixpkgs.legacyPackages.${system}.alejandra);
 
     # custom packages/modifications, exported as overlays
-    ## overlays = import ./overlays {inherit inputs;};
+    overlays = import ./overlays {inherit inputs;};
     # reusable nixos modules export
     # upstream into nixpkgs
     nixosModules = import ./modules/nixos;
@@ -48,15 +47,5 @@
           ];
         };
       };
-      
-      homeConfigurations = {
-	    "dargon@sylvester" = home-manager.lib.homeManagerConfiguration {
-		pkgs = nixpkgs.x86_64-linux;
-		extraSpecialArgs = {inherit inputs;};
-		modules = [
-		  ./home-manager/home.nix
-		];
-	    };
-	  };
-  };
+    };
 }

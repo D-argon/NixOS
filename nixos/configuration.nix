@@ -1,6 +1,7 @@
 { inputs, lib, config, pkgs, ... }:
 {
   imports = [
+    inputs.home-manager.nixosModules.home-manager
     ./hardware-configuration.nix
   ];
 
@@ -10,6 +11,13 @@
 
   networking.hostName = "sylvester";
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
+
+  home-manager = {
+    extraSpecialArgs = { inherit inputs; };
+    users = {
+       dargon= import ../home-manager/home.nix;
+    };
+  };
 
   # network proxy
   # networking.proxy.default = "http://user:password@proxy:port/";
