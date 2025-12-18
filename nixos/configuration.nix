@@ -11,6 +11,8 @@
 
   networking.hostName = "sylvester";
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
+  
+  nixpkgs.config.allowUnfree = true;
 
   home-manager = {
     extraSpecialArgs = { inherit inputs; };
