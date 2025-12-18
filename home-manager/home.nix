@@ -58,11 +58,11 @@
 
     settings = {
       env.TERM = "xterm-256color";
-      windows.opacity = 0.7;
+      window.opacity = 0.7;
       font = {
         size = 12.0;
-        draw_bold_text_with_bright_colors = true;
       };
+      colors.draw_bold_text_with_bright_colors = true;
       scrolling.multiplier = 5;
       selection.save_to_clipboard = true;
     };
