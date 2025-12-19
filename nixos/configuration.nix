@@ -176,6 +176,7 @@
       enable = true;
       drivers = with pkgs; [hplip hplipWithPlugin];
       listenAddresses = ["*:631"];
+      allowFrom = [ "all" ];
       browsing = true;
       defaultShared = true;
     };
@@ -184,6 +185,10 @@
       enable = true;
       nssmdns4 = true;
       openFirewall = true;
+      publish = {
+	enable = true;
+    	userServices = true;
+      };
     };
   };
 
