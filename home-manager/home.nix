@@ -45,9 +45,10 @@
   
     # python
     (python3.withPackages (python-pkgs: with python-pkgs; [
+      django
+      numpy
       pandas
       requests
-      numpy
     ]))
   ];
 
