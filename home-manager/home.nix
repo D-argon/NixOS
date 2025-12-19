@@ -19,6 +19,7 @@
     discord
     youtube-music
     keepassxc
+    syncthing
 
     nix-output-monitor
     nixfmt-rfc-style
@@ -41,6 +42,13 @@
     xfce.thunar
     xfce.thunar-archive-plugin
     xfce.thunar-volman
+  
+    # python
+    (python3.withPackages (python-pkgs: with python-pkgs; [
+      pandas
+      requests
+      numpy
+    ]))
   ];
 
   manual.manpages.enable = true;
