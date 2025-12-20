@@ -16,13 +16,6 @@
     efi.canTouchEfiVariables = true;
   };
 
-  nix.gc = {
-    automatic = true;
-    dates = "weekly";
-    options = "--delete-older-than 7d";
-  };
-  nix.settings.auto-optimise-store = true;
-
   networking.hostName = "sylvester";
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
 
@@ -210,7 +203,15 @@
   nix = let
     flakeInputs = lib.filterAttrs (_: lib.isType "flake") inputs;
   in {
+
+  gc = {
+    automatic = true;
+    dates = "weekly";
+    options = "--delete-older-than 7d";
+  };
+  
     settings = {
+auto-optimise-store = true;
       experimental-features = "nix-command flakes";
       # disable global registry
       flake-registry = "";
