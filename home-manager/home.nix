@@ -13,8 +13,12 @@
   nixpkgs.config.allowUnfree = true;
 
   home.packages = with pkgs; [
-    neofetch
+    fastfetch
     nnn
+    xfce.thunar
+    xfce.thunar-archive-plugin
+    xfce.thunar-volman
+    feh
 
     discord
     youtube-music
@@ -22,7 +26,6 @@
     syncthing
 
     nix-output-monitor
-    nixfmt-rfc-style
 
     glow
 
@@ -37,19 +40,6 @@
     gimp
 
     gnome-connections
-
-    feh
-    xfce.thunar
-    xfce.thunar-archive-plugin
-    xfce.thunar-volman
-  
-    # python
-    (python3.withPackages (python-pkgs: with python-pkgs; [
-      django
-      numpy
-      pandas
-      requests
-    ]))
   ];
 
   manual.manpages.enable = true;
@@ -61,6 +51,8 @@
     userName = "dargon";
     userEmail = "dargon@sylvester";
   };
+
+  programs.direnv.enable = true;
 
   programs.alacritty = {
     enable = true;

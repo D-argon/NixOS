@@ -25,19 +25,16 @@
     ];
     forAllSystems = nixpkgs.lib.genAttrs systems;
   in {
+
     # custom packages
-    # access 'nix build', 'nix shell', etc
     packages = forAllSystems (system: import ./pkgs nixpkgs.legacyPackages.${system});
-    # 'nix fmt'
     formatter = forAllSystems (system: nixpkgs.legacyPackages.${system}.alejandra);
 
     # custom packages/modifications, exported as overlays
     overlays = import ./overlays {inherit inputs;};
-    # reusable nixos modules export
-    # upstream into nixpkgs
+    # modules export, upstream into nixpkgs
     nixosModules = import ./modules/nixos;
-    # reusable home-manager modules export
-    # upstream into home-manager
+    # modules export, upstream into home-manager
     homeManagerModules = import ./modules/home-manager;
 
     nixosConfigurations = {
@@ -45,6 +42,14 @@
         specialArgs = {inherit inputs;};
         modules = [
           ./nixos/configuration.nix
+
+	  home-manager.nixosModules.home-manager
+          {
+            home-manager = {
+	      extraSpecialArgs = {inherit inputs;};
+              users.dargon = import ./home-manager/home.nix;
+	    };
+          }
         ];
       };
     };

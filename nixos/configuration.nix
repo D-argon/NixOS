@@ -6,7 +6,6 @@
   ...
 }: {
   imports = [
-    inputs.home-manager.nixosModules.home-manager
     ./hardware-configuration.nix
   ];
 
@@ -18,13 +17,6 @@
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
 
   nixpkgs.config.allowUnfree = true;
-
-  home-manager = {
-    extraSpecialArgs = {inherit inputs;};
-    users = {
-      dargon = import ../home-manager/home.nix;
-    };
-  };
 
   # network proxy
   # networking.proxy.default = "http://user:password@proxy:port/";
@@ -96,10 +88,11 @@
     zip
     unzip
     p7zip
-
+    
+    tree
+    eza # ls alt
     gnumake
     gnupg
-    tree
 
     yad
     xdotool
@@ -111,7 +104,6 @@
     socat
     nmap
 
-    librewolf
     freerdp
     pavucontrol
     scrot
@@ -214,6 +206,8 @@
       flake-registry = "";
       # workaround https://github.com/NixOS/nix/issues/9574
       nix-path = config.nix.nixPath;
+      trusted-users = [ "root" "@wheel" ];
+
     };
     # disable channels
     channel.enable = false;
