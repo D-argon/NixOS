@@ -5,6 +5,11 @@
   pkgs,
   ...
 }: {
+imports = [
+  ./wordpress.nix
+  
+  ];
+
   home = {
     username = "dargon";
     homeDirectory = "/home/dargon";
@@ -40,7 +45,10 @@
     gimp
 
     gnome-connections
+    wordpress
   ];
+
+  
 
   manual.manpages.enable = true;
 
