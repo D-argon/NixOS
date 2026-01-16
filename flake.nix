@@ -8,12 +8,18 @@
       url = "github:nix-community/home-manager/release-25.05";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    nixvim = {
+      url = "github:nix-community/nixvim/nixos-25.05";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = {
     self,
     nixpkgs,
     home-manager,
+    nixvim,
     ...
   } @ inputs: let
     systems = [
@@ -25,7 +31,6 @@
     ];
     forAllSystems = nixpkgs.lib.genAttrs systems;
   in {
-
     # custom packages
     packages = forAllSystems (system: import ./pkgs nixpkgs.legacyPackages.${system});
     formatter = forAllSystems (system: nixpkgs.legacyPackages.${system}.alejandra);
@@ -43,11 +48,12 @@
         modules = [
           ./nixos/configuration.nix
 
-	  home-manager.nixosModules.home-manager
+          home-manager.nixosModules.home-manager
           {
             home-manager = {
-	      extraSpecialArgs = {inherit inputs;};
+              extraSpecialArgs = {inherit inputs;};
               users.dargon = import ./home-manager/home.nix;
+              backupFileExtension = "backup";
 	    };
           }
         ];

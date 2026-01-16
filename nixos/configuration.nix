@@ -7,12 +7,13 @@
 }: {
   imports = [
     ./hardware-configuration.nix
+    ./wordpress.nix
   ];
 
   # Bootloader
   boot.loader = { 
     systemd-boot.enable = true;
-    systemd-boot.configurationLimit = 10;
+    systemd-boot.configurationLimit = 5;
     efi.canTouchEfiVariables = true;
   };
 
@@ -58,15 +59,20 @@
     windowManager.i3 = {
       enable = true;
       extraPackages = with pkgs; [
-        dmenu
-        i3status
+        rofi
+	i3status
         i3blocks
+        i3lock
       ];
     };
 
     xkb.layout = "br";
   };
-  programs.i3lock.enable = true;
+  
+  services.picom = {
+    enable = true;
+    backend = "glx";
+  };
 
   environment.pathsToLink = ["/libexec"];
   #services.displayManager.defaultSession = "none+i3";
@@ -85,7 +91,6 @@
   };
 
   environment.systemPackages = with pkgs; [
-    wget
     gcc
 
     zip
@@ -101,15 +106,23 @@
     xdotool
     clipit
     xclip
+    scrot
 
+    wget
     dnsutils
     iftop
     socat
     nmap
 
-    freerdp
     pavucontrol
-    scrot
+
+    wordpress
+  ];
+
+  fonts.packages = with pkgs;[
+  unifont
+  unifont-csur
+  unifont_upper
   ];
 
   # SUID
@@ -125,10 +138,8 @@
     policies.DisableTelemetry = true;
   };
 
-  programs.virt-manager.enable = true;
   programs.vim.enable = true;
-  programs.neovim.enable = true;
-  environment.variables.EDITOR = "nvim";
+  environment.variables.EDITOR = "vim";
 
   security = {
     rtkit.enable = true;
