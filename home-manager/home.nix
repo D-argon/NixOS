@@ -3,6 +3,7 @@
   lib,
   config,
   pkgs,
+  username,
   ...
 }: {
 
@@ -11,49 +12,59 @@ imports = [
 
   ../modules/i3wm
   ../modules/rofi
-  
+  ../modules/picom
+
   ./librewolf.nix
   ./alacritty.nix
   ./bash.nix
   ./nixvim.nix
 ];
+  
+  nixpkgs = {
+    config.allowUnfree = true;
 
-  home = {
-    username = "dargon";
-    homeDirectory = "/home/dargon";
+    overlays = [
+    inputs.self.overlays.additions
+    inputs.self.overlays.modifications
+    inputs.self.overlays.unstable-packages
+
+
+    ];
   };
 
-  nixpkgs.config.allowUnfree = true;
+  home = {
+    username = username;
+    homeDirectory = "/home/${username}";
+  };
+
 
   home.packages = with pkgs; [
     fastfetch
-    nnn
-    xfce.thunar
     xfce.thunar-archive-plugin
     xfce.thunar-volman
-    feh
 
     discord
     youtube-music
     keepassxc
     syncthing
-
-    nix-output-monitor
-
-    glow
-
-    sysstat
-    ethtool
-    lm_sensors
-    pciutils
-    usbutils
-    btop
-    htop
-
+    thunderbird
     obsidian
     libreoffice
     gimp
     inkscape
+
+    nix-output-monitor
+
+    glow
+    blesh
+
+    sysstat
+    ethtool
+    pciutils
+    usbutils
+    btop
+    htop
+    qbittorrent
 
     gnome-connections
     devenv
@@ -69,16 +80,15 @@ imports = [
   manual.manpages.enable = true;
 
   programs.home-manager.enable = true;
-
   programs.git = {
     enable = true;
-    userName = "dargon";
-    userEmail = "dargon@sylvester";
+    userName = username;
+    userEmail = "${username}@sylvester";
   };
 
-  programs.direnv.enable = true;
-
   systemd.user.startServices = "sd-switch";
+
+  programs.direnv.enable = true;
 
   home.stateVersion = "25.05";
 }

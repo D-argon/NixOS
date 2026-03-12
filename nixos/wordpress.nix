@@ -12,7 +12,14 @@
 
 in {
 
-  services.wordpress.sites."localhost".languages = [ wordpress-language-pt ];
+  services.wordpress.sites."200.145.216.144" = {
 
+    plugins = {
+    inherit (pkgs.wordpressPackages.plugins) 
+      antispam-bee
+      opengraph;
+  };
+    languages = [ wordpress-language-pt ];
+  };
 }
 

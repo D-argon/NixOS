@@ -14,9 +14,9 @@
     executable = true;  # make all scripts executable
   };
 
-
+  xresources.path = "$HOME/.config/X11/Xresources";
   xresources.properties = {
-    "Xcursor.size" = 16;
+    "Xcursor.size" = 24;
     #"Xft.dpi" = 192;
   };
 

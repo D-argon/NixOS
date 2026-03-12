@@ -3,6 +3,7 @@
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-25.05";
+    nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
 
     home-manager = {
       url = "github:nix-community/home-manager/release-25.05";
@@ -11,6 +12,11 @@
 
     nixvim = {
       url = "github:nix-community/nixvim/nixos-25.05";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    compose2nix = {
+      url = "github:aksiksi/compose2nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
@@ -43,16 +49,20 @@
     homeManagerModules = import ./modules/home-manager;
 
     nixosConfigurations = {
-      sylvester = nixpkgs.lib.nixosSystem {
-        specialArgs = {inherit inputs;};
-        modules = [
+      sylvester = let 
+	username = "dargon";
+        specialArgs = {inherit inputs username;};
+        in
+      nixpkgs.lib.nixosSystem {
+	inherit specialArgs;
+	modules = [
           ./nixos/configuration.nix
 
           home-manager.nixosModules.home-manager
           {
             home-manager = {
-              extraSpecialArgs = {inherit inputs;};
-              users.dargon = import ./home-manager/home.nix;
+              extraSpecialArgs = inputs // specialArgs;
+              users.${username} = import ./home-manager/home.nix;
               backupFileExtension = "backup";
 	    };
           }

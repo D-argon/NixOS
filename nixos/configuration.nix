@@ -6,9 +6,21 @@
   ...
 }: {
   imports = [
+    inputs.self.nixosModules.system
+    # inputs.self.nixosModules.ojs
+
     ./hardware-configuration.nix
-    ./wordpress.nix
+    # ./wordpress.nix
   ];
+
+  nixpkgs = {
+    overlays = [
+	inputs.self.overlays.additions
+	inputs.self.overlays.modifications
+	inputs.self.overlays.unstable-packages
+    ];
+
+  };
 
   # Bootloader
   boot.loader = { 
@@ -20,95 +32,101 @@
   networking.hostName = "sylvester";
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
 
-  nixpkgs.config.allowUnfree = true;
-
   # network proxy
   # networking.proxy.default = "http://user:password@proxy:port/";
   # networking.proxy.noProxy = "127.0.0.1,localhost,internal.domain";
 
+  nixpkgs.config.permittedInsecurePackages = [ "ventoy-1.1.05" ];
+
   # networking
   networking.networkmanager.enable = true;
 
-  # time zone.
-  time.timeZone = "America/Sao_Paulo";
-
-  # locale
-  i18n.defaultLocale = "en_US.UTF-8";
-  i18n.extraLocaleSettings = {
-    LC_ADDRESS = "pt_BR.UTF-8";
-    LC_IDENTIFICATION = "pt_BR.UTF-8";
-    LC_MEASUREMENT = "pt_BR.UTF-8";
-    LC_MONETARY = "pt_BR.UTF-8";
-    LC_NAME = "pt_BR.UTF-8";
-    LC_NUMERIC = "pt_BR.UTF-8";
-    LC_PAPER = "pt_BR.UTF-8";
-    LC_TELEPHONE = "pt_BR.UTF-8";
-    LC_TIME = "pt_BR.UTF-8";
-  };
-
-  # bluetooth
+# bluetooth
   hardware.bluetooth = {
     enable = true;
-    powerOnBoot = true;
+    powerOnBoot = false;
     settings.General.Experimental = true;
   };
 
   services.xserver = {
     enable = true;
 
+    displayManager.lightdm.enable = false;
+
     windowManager.i3 = {
       enable = true;
       extraPackages = with pkgs; [
-        rofi
+	acpi
+	arandr
+	dex
+	dunst
+	feh
 	i3status
         i3blocks
         i3lock
+	i3-gaps
+	picom
+        rofi
+	sysstat
+	xautolock
+	xbindkeys
+	xcolor
+	xorg.xdpyinfo
       ];
     };
 
     xkb.layout = "br";
+    xkb.variant = "abnt2";
   };
   
-  services.picom = {
-    enable = true;
-    backend = "glx";
+  environment.pathsToLink = ["/libexec"];
+  environment.sessionVariables = rec {
+    XDG_CACHE_HOME  = "$HOME/.cache";
+    XDG_CONFIG_HOME = "$HOME/.config";
+    XDG_DATA_HOME   = "$HOME/.local/share";
+    XDG_STATE_HOME  = "$HOME/.local/state";
+
+    # Not officially in the specification
+    XDG_BIN_HOME    = "$HOME/.local/bin";
+    PATH = [ 
+      "${XDG_BIN_HOME}"
+      "$PATH:$HOME/bin:$HOME/.local/bin:HOME/go/bin"
+    ];
   };
 
-  environment.pathsToLink = ["/libexec"];
-  #services.displayManager.defaultSession = "none+i3";
+  services.displayManager = {
+      ly.enable = true;
+      ly.settings = {
+	      animate = true;
+	      #animation = "cmatrix";
+	      hide_borders = true;
+	      clock = "%c";
+	      bigclock = true;
+	      hide_f1_commands = true;
+	      allow_empty_password = false;
+	      clear_password = true;
+	      # ...
+      };
+  	defaultSession = "none+i3";
+  };
 
   # Configure console keymap
   console.keyMap = "br-abnt2";
 
-  users.users.dargon = {
-    isNormalUser = true;
-    description = "dargon";
-    extraGroups = [
-      "networkmanager"
-      "wheel"
-      "libvirtd"
-    ];
-  };
-
   environment.systemPackages = with pkgs; [
-    gcc
-
-    zip
-    unzip
     p7zip
-    
+    freerdp
     tree
     eza # ls alt
     gnumake
     gnupg
+    calc
 
     yad
     xdotool
     clipit
     xclip
-    scrot
 
-    wget
     dnsutils
     iftop
     socat
@@ -116,13 +134,12 @@
 
     pavucontrol
 
+    ventoy
+    tor-browser
     wordpress
-  ];
-
-  fonts.packages = with pkgs;[
-  unifont
-  unifont-csur
-  unifont_upper
+    php
+      docker
+      docker-compose
   ];
 
   # SUID
@@ -138,8 +155,13 @@
     policies.DisableTelemetry = true;
   };
 
-  programs.vim.enable = true;
   environment.variables.EDITOR = "vim";
+
+  services.postgresql = {
+    enable = true;
+    package = pkgs.postgresql_16;
+  };
+
 
   security = {
     rtkit.enable = true;
@@ -148,44 +170,10 @@
 
   # Enable the OpenSSH daemon.
   services = {
-    openssh = {
-      enable = true;
-      settings = {
-        X11Forwarding = true;
-        PermitRootLogin = "no";
-        PasswordAuthentication = false;
-      };
-      openFirewall = true;
-    };
-
-    pipewire = {
-      enable = true;
-      alsa.enable = true;
-      pulse.enable = true;
-      audio.enable = true;
-      jack.enable = true;
-      wireplumber.enable = true;
-      extraConfig = {
-        pipewire."99-silent-bell.conf" = {
-          "context.properties" = {
-            "module.x11.bell" = false;
-          };
-        };
-      };
-    };
-
+    
     gvfs.enable = true;
     tumbler.enable = true;
     blueman.enable = true;
-
-    printing = {
-      enable = true;
-      drivers = with pkgs; [hplip hplipWithPlugin];
-      listenAddresses = ["*:631"];
-      allowFrom = [ "all" ];
-      browsing = true;
-      defaultShared = true;
-    };
 
     avahi = {
       enable = true;
@@ -198,47 +186,10 @@
     };
   };
 
-  virtualisation.libvirtd = {
-    enable = true;
 
-    qemu = {
-      ovmf = {
-        enable = true;
-        packages = [pkgs.OVMFFull.fd];
-      };
-
-      swtpm.enable = true;
-    };
-  };
-
-  nix = let
-    flakeInputs = lib.filterAttrs (_: lib.isType "flake") inputs;
-  in {
-
-  gc = {
-    automatic = true;
-    dates = "weekly";
-    options = "--delete-older-than 7d";
-  };
-  
-    settings = {
-auto-optimise-store = true;
-      experimental-features = "nix-command flakes";
-      # disable global registry
-      flake-registry = "";
-      # workaround https://github.com/NixOS/nix/issues/9574
-      nix-path = config.nix.nixPath;
-      trusted-users = [ "root" "@wheel" ];
-
-    };
-    # disable channels
-    channel.enable = false;
-
-    # make flake registry and nix path match flake inputs
-    registry = lib.mapAttrs (_: flake: {inherit flake;}) flakeInputs;
-    nixPath = lib.mapAttrsToList (n: _: "${n}=flake:${n}") flakeInputs;
-  };
-
+    programs.dconf.enable = true;
+    virtualisation.docker.enable = true;
+ 
   # Open ports in the firewall.
   # networking.firewall.allowedTCPPorts = [ ... ];
   # networking.firewall.allowedUDPPorts = [ ... ];
