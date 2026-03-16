@@ -65,9 +65,11 @@ imports = [
     btop
     htop
     qbittorrent
+    deskflow
 
     gnome-connections
     devenv
+    exfat
   ];
   
   fonts = {
@@ -82,8 +84,8 @@ imports = [
   programs.home-manager.enable = true;
   programs.git = {
     enable = true;
-    userName = username;
-    userEmail = "${username}@sylvester";
+    settings.user.name = username;
+    settings.user.email = "${username}@sylvester";
   };
 
   systemd.user.startServices = "sd-switch";

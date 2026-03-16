@@ -3,8 +3,12 @@
   lib,
   config,
   pkgs,
+  username,
   ...
-}: {
+}: let
+  homePath = "${config.users.users.${username}.home}";
+  
+  in {
   imports = [
     inputs.self.nixosModules.system
     # inputs.self.nixosModules.ojs
@@ -64,7 +68,6 @@
 	i3status
         i3blocks
         i3lock
-	i3-gaps
 	picom
         rofi
 	sysstat
@@ -72,7 +75,7 @@
 	xbindkeys
 	xcolor
 	xorg.xdpyinfo
-      ];
+     ];
     };
 
     xkb.layout = "br";
@@ -80,19 +83,6 @@
   };
   
   environment.pathsToLink = ["/libexec"];
-  environment.sessionVariables = rec {
-    XDG_CACHE_HOME  = "$HOME/.cache";
-    XDG_CONFIG_HOME = "$HOME/.config";
-    XDG_DATA_HOME   = "$HOME/.local/share";
-    XDG_STATE_HOME  = "$HOME/.local/state";
-
-    # Not officially in the specification
-    XDG_BIN_HOME    = "$HOME/.local/bin";
-    PATH = [ 
-      "${XDG_BIN_HOME}"
-      "$PATH:$HOME/bin:$HOME/.local/bin:HOME/go/bin"
-    ];
-  };
 
   services.displayManager = {
       ly.enable = true;
@@ -111,7 +101,6 @@
   };
 
   # Configure console keymap
-  console.keyMap = "br-abnt2";
 
   environment.systemPackages = with pkgs; [
     p7zip
@@ -134,7 +123,7 @@
 
     pavucontrol
 
-    ventoy
+#    ventoy
     tor-browser
     wordpress
     php
@@ -165,7 +154,7 @@
 
   security = {
     rtkit.enable = true;
-    tpm2.enable = true;
+    # tpm2.enable = true;
   };
 
   # Enable the OpenSSH daemon.
@@ -186,7 +175,6 @@
     };
   };
 
-
     programs.dconf.enable = true;
     virtualisation.docker.enable = true;
  
@@ -198,5 +186,5 @@
 
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
   # https://nixos.wiki/wiki/FAQ/When_do_I_update_stateVersion
-  system.stateVersion = "25.05";
+  system.stateVersion = "25.11";
 }

@@ -24,9 +24,9 @@
       sudo = "sudo ";
       lla = "ls -la ";
       soft = "systemctl soft-reboot";
-      nixSwitch = "sudo nixos-rebuild switch --flake ~/sylvesterNixos/";
-      nixTest = "sudo nixos-rebuild test --flake ~/sylvesterNixos/";
-      nixBuild = "sudo nixos-rebuild build --flake ~/sylvesterNixos/";
+      nixSwitch = "sudo nixos-rebuild switch --flake ~/NixOS/";
+      nixTest = "sudo nixos-rebuild test --flake ~/NixOS/";
+      nixBuild = "sudo nixos-rebuild build --flake ~/NixOS/";
     };
   };
 }
