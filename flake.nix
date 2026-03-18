@@ -49,20 +49,39 @@
     homeManagerModules = import ./modules/home-manager;
 
     nixosConfigurations = {
-      sylvester = let 
+      sylvester-client = let 
 	username = "dargon";
         specialArgs = {inherit inputs username;};
         in
       nixpkgs.lib.nixosSystem {
 	inherit specialArgs;
 	modules = [
-          ./nixos/configuration.nix
+          ./nixos/sylvester-client
 
           home-manager.nixosModules.home-manager
           {
             home-manager = {
               extraSpecialArgs = inputs // specialArgs;
-              users.${username} = import ./home-manager/home.nix;
+              users.${username} = import ./home-manager/${username};
+              backupFileExtension = "backup";
+	    };
+          }
+        ];
+      };
+      sylvester-server = let 
+	username = "dargon";
+        specialArgs = {inherit inputs username;};
+        in
+      nixpkgs.lib.nixosSystem {
+	inherit specialArgs;
+	modules = [
+          ./nixos/sylvester-server
+
+          home-manager.nixosModules.home-manager
+          {
+            home-manager = {
+              extraSpecialArgs = inputs // specialArgs;
+              users.${username} = import ./home-manager/${username};
               backupFileExtension = "backup";
 	    };
           }

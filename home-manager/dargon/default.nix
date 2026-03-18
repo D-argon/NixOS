@@ -10,14 +10,14 @@
 imports = [
   inputs.nixvim.homeModules.nixvim
 
-  ../modules/i3wm
-  ../modules/rofi
-  ../modules/picom
+  ../../modules/i3wm
+  ../../modules/rofi
+  ../../modules/picom
 
-  ./librewolf.nix
-  ./alacritty.nix
-  ./bash.nix
-  ./nixvim.nix
+  ../librewolf.nix
+  ../alacritty.nix
+  ../bash.nix
+  ../nixvim.nix
 ];
   
   nixpkgs = {
