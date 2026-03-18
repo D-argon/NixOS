@@ -28,8 +28,16 @@
 
   # Bootloader
   boot.loader = { 
-    systemd-boot.enable = true;
-    systemd-boot.configurationLimit = 5;
+    systemd-boot.enable = false;
+    timeout = 1;
+    limine = {
+      enable = true;
+      secureBoot.enable = true;
+      maxGenerations = 5;
+      style.wallpapers = [
+	"${homePath}/limine.jpg"
+      ];
+    };
     efi.canTouchEfiVariables = true;
   };
 
@@ -44,6 +52,7 @@
 
   # networking
   networking.networkmanager.enable = true;
+  systemd.services.NetworkManager-wait-online.enable = false;
 
 # bluetooth
   hardware.bluetooth = {
@@ -81,7 +90,7 @@
     xkb.layout = "br";
     xkb.variant = "abnt2";
   };
-  
+
   environment.pathsToLink = ["/libexec"];
 
   services.displayManager = {
@@ -97,12 +106,16 @@
 	      clear_password = true;
 	      # ...
       };
-  	defaultSession = "none+i3";
+
+      defaultSession = "none+i3";
+      # autoLogin.user = "${username}";
+      # autoLogin.enable = true;
   };
 
   # Configure console keymap
 
   environment.systemPackages = with pkgs; [
+    sbctl
     p7zip
     freerdp
     tree
@@ -154,7 +167,11 @@
 
   security = {
     rtkit.enable = true;
-    # tpm2.enable = true;
+    tpm2 = {
+      enable = true;
+      pkcs11.enable = true;
+      tctiEnvironment.enable = true;
+    };
   };
 
   # Enable the OpenSSH daemon.
